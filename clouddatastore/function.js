@@ -11,6 +11,7 @@ exports.handler = function (request, response) {
             }
         }
     }).then(response => {
+        console.log("successful response");  
         console.log(response.data);           // successful response
         /*
         response.data = {
@@ -19,6 +20,7 @@ exports.handler = function (request, response) {
         */
     })
         .catch(err => {
+            console.log("an error occurred");  
             console.log(err, err.stack); // an error occurred
         });
 
