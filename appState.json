@@ -1,0 +1,125 @@
+{
+  "EDITOR_STATE": {
+    "allProjectFiles": {
+      "639e824f-9d57-442f-9009-f69526befbf5": {
+        "id": "639e824f-9d57-442f-9009-f69526befbf5",
+        "parent": null,
+        "name": "clouddatastore",
+        "type": "DIRECTORY",
+        "isDirectory": true,
+        "children": [
+          "e6b62555-a90b-4a3c-ab64-c582023721fc",
+          "70789bb7-7971-4ca0-8e15-42871d499261"
+        ],
+        "isRemovable": false,
+        "filePath": "clouddatastore"
+      },
+      "e6b62555-a90b-4a3c-ab64-c582023721fc": {
+        "id": "e6b62555-a90b-4a3c-ab64-c582023721fc",
+        "parent": "639e824f-9d57-442f-9009-f69526befbf5",
+        "name": "function.js",
+        "type": "JS_LAMBDA",
+        "isDirectory": false,
+        "children": [],
+        "isRemovable": true,
+        "filePath": "clouddatastore/function.js",
+        "code": "let google = require('googleapis').google;\nlet _auth = require('./Authorizer');\nconst datastore = google.datastore('v1');\n\nexports.handler = function (request, response) {\n    datastore.projects.beginTransaction({\n        projectId: process.env.GCP_PROJECT,\n        resource: {\n            transactionOptions: {\n                readWrite: {}\n            }\n        }\n    }).then(response => {\n        console.log(response.data);           // successful response\n        /*\n        response.data = {\n            \"transaction\": \"<transaction ID>\"\n        }\n        */\n    })\n        .catch(err => {\n            console.log(err, err.stack); // an error occurred\n        });\n\n    response.send({ \"message\": \"Successfully executed\" });\n}",
+        "config": {
+          "runtime": "nodejs8",
+          "timeout": 60,
+          "memory": 128,
+          "triggerType": 0,
+          "handler": "handler"
+        },
+        "triggers": [
+          {
+            "resourceName": "http-trigger",
+            "config": {}
+          }
+        ]
+      },
+      "8a7a5bf5-699e-40bc-9c46-feafaef58f4d": {
+        "id": "8a7a5bf5-699e-40bc-9c46-feafaef58f4d",
+        "parent": null,
+        "name": "index.js",
+        "type": "JS_FILE",
+        "isDirectory": false,
+        "children": [],
+        "isRemovable": false,
+        "filePath": "index.js",
+        "code": "// This file is used to register all your cloud functions in GCP.\n// DO NOT EDIT/DELETE THIS, UNLESS YOU KNOW WHAT YOU ARE DOING.\n\nexports.clouddatastorefunction = require(\"./clouddatastore/function.js\").handler;"
+      },
+      "65905951-afc6-407b-889e-a509eaa4a45a": {
+        "id": "65905951-afc6-407b-889e-a509eaa4a45a",
+        "parent": null,
+        "name": "main.py",
+        "type": "PYTHON_FILE",
+        "isDirectory": false,
+        "children": [],
+        "isRemovable": false,
+        "filePath": "main.py",
+        "code": "# This file is used to register all your cloud functions in GCP.\n# DO NOT EDIT/DELETE THIS, UNLESS YOU KNOW WHAT YOU ARE DOING.\n\n"
+      },
+      "70789bb7-7971-4ca0-8e15-42871d499261": {
+        "id": "70789bb7-7971-4ca0-8e15-42871d499261",
+        "parent": "639e824f-9d57-442f-9009-f69526befbf5",
+        "name": "Authorizer.js",
+        "type": "JS_FILE",
+        "isDirectory": false,
+        "children": [],
+        "isRemovable": true,
+        "filePath": "clouddatastore/Authorizer.js",
+        "code": "const google = require(\"googleapis\").google;\n\ngoogle.options({auth: new google.auth.Compute()});"
+      }
+    },
+    "rootNode": "639e824f-9d57-442f-9009-f69526befbf5",
+    "openFiles": [
+      "e6b62555-a90b-4a3c-ab64-c582023721fc"
+    ],
+    "currentFileId": "e6b62555-a90b-4a3c-ab64-c582023721fc",
+    "resources": {
+      "http-trigger": {
+        "name": "http-trigger",
+        "type": "http-trigger",
+        "config": {}
+      },
+      "datastore": {
+        "name": "datastore",
+        "type": "datastore",
+        "config": {}
+      }
+    },
+    "customTemplate": {
+      "dialect": null,
+      "definitions": null
+    },
+    "envVariables": [],
+    "packageJSON": {
+      "dependencies": {
+        "googleapis": {
+          "name": "googleapis",
+          "language": "javascript",
+          "version": "29.0.0",
+          "dev": false,
+          "notRemovable": false
+        }
+      }
+    }
+  },
+  "PROJECT_META": {
+    "projectName": "clouddatastore",
+    "projectDescription": "",
+    "projectVersion": "1.0.0",
+    "projectRegion": "us-east1",
+    "platform": "GCP",
+    "platformRegions": {},
+    "lastSave": 1568712784650
+  },
+  "VCS_STATE": {
+    "provider": "GitHub",
+    "repo": {
+      "name": "clouddatastore",
+      "url": "https://github.com/Indunil1992/clouddatastore"
+    }
+  }
+}
