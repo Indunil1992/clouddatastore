@@ -9,7 +9,8 @@
         "isDirectory": true,
         "children": [
           "e6b62555-a90b-4a3c-ab64-c582023721fc",
-          "70789bb7-7971-4ca0-8e15-42871d499261"
+          "70789bb7-7971-4ca0-8e15-42871d499261",
+          "76d51e3f-065a-4c12-8865-73f04b99c952"
         ],
         "isRemovable": false,
         "filePath": "clouddatastore"
@@ -23,7 +24,7 @@
         "children": [],
         "isRemovable": true,
         "filePath": "clouddatastore/function.js",
-        "code": "let google = require('googleapis').google;\nlet _auth = require('./Authorizer');\nconst pubsub = google.pubsub('v1');\n\nexports.handler = function (request, response) {\n    pubsub.projects.topics.subscriptions.list({\n        topic: `projects/${process.env.GCP_PROJECT}/topics/cloud-builds`,\n        pageSize: 10\n    })\n        .then(response => {\n            console.log(response.data);  // successful response\n             console.log(\" passsss\");\n            /*\n            response.data = {\n                \"subscriptions\": [\n                    \"projects/<project>/subscriptions/<subscription-1>\",\n                    \"projects/<project>/subscriptions/<subscription-2>\",\n                    ...\n                ]\n            }\n            */\n        })\n        .catch(err => {\n            console.log(err, err.stack); // an error occurred\n            console.log(\" errrrrr\");\n        });\n\n    response.send({ \"message\": \"Successfully executed\" });\n}",
+        "code": "let SL_GCP = require('slappforge-sdk-gcp');\nlet sqlConnMgr = require('./SqlConnMgr');\nconst sql = new SL_GCP.SQL(sqlConnMgr);\n\nexports.handler = function (request, response) {\n    // You must always end/destroy the DB connection after it's used.\n    sql.beginTransaction({\n        instanceIdentifier: 'instance10'\n    }, function (error, connection) {\n        if (error) {\n            throw error;\n        }\n    });\nconnection.end();\n    response.send({ \"message\": \"Successfully executed\" });\n}",
         "config": {
           "runtime": "nodejs8",
           "timeout": 60,
@@ -70,6 +71,17 @@
         "isRemovable": true,
         "filePath": "clouddatastore/Authorizer.js",
         "code": "const google = require(\"googleapis\").google;\n\ngoogle.options({auth: new google.auth.Compute()});"
+      },
+      "76d51e3f-065a-4c12-8865-73f04b99c952": {
+        "id": "76d51e3f-065a-4c12-8865-73f04b99c952",
+        "parent": "639e824f-9d57-442f-9009-f69526befbf5",
+        "name": "SqlConnMgr.js",
+        "type": "JS_FILE",
+        "isDirectory": false,
+        "children": [],
+        "isRemovable": true,
+        "filePath": "clouddatastore/SqlConnMgr.js",
+        "code": "module.exports = function() {\n    this.dbConnections = [];\n\n    this.dbConnections[\"instance10\"] = {\n        host: \"34.74.106.203\",\n        port: \"3306\",\n        user: \"mysql.sys\",\n        password: process.env.Password_sqlinstance10,\n        database: \"information_schema\"\n    };\n};"
       }
     },
     "rootNode": "639e824f-9d57-442f-9009-f69526befbf5",
@@ -83,14 +95,18 @@
         "type": "http-trigger",
         "config": {}
       },
-      "pubsubcloudBuilds": {
-        "name": "pubsubcloudBuilds",
-        "type": "pubsub",
+      "sqlinstance10": {
+        "name": "sqlinstance10",
+        "type": "SQL",
         "config": {
           "mode": 1,
-          "topic": {
-            "name": "cloud-builds",
-            "subscriptions": []
+          "instance": {
+            "name": "instance10",
+            "host": "34.74.106.203",
+            "port": 3306,
+            "user": "mysql.sys",
+            "password": "sachithra",
+            "database": "information_schema"
           }
         }
       }
@@ -99,13 +115,29 @@
       "dialect": null,
       "definitions": null
     },
-    "envVariables": [],
+    "envVariables": [
+      {
+        "lambdaId": "e6b62555-a90b-4a3c-ab64-c582023721fc",
+        "varKey": "Password_sqlinstance10",
+        "varValue": null,
+        "shouldPersist": false,
+        "displayOnly": false,
+        "editable": true
+      }
+    ],
     "packageJSON": {
       "dependencies": {
         "googleapis": {
           "name": "googleapis",
           "language": "javascript",
           "version": "29.0.0",
+          "dev": false,
+          "notRemovable": false
+        },
+        "slappforge-sdk-gcp": {
+          "name": "slappforge-sdk-gcp",
+          "language": "javascript",
+          "version": "0.0.1",
           "dev": false,
           "notRemovable": false
         }
@@ -119,7 +151,7 @@
     "projectRegion": "us-east1",
     "platform": "GCP",
     "platformRegions": {},
-    "lastSave": 1568714079537
+    "lastSave": 1568718645798
   },
   "VCS_STATE": {
     "provider": "GitHub",

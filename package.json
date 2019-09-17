@@ -2,7 +2,8 @@
   "name": "clouddatastore",
   "version": "1.0.0",
   "dependencies": {
-    "googleapis": "29.0.0"
+    "googleapis": "29.0.0",
+    "slappforge-sdk-gcp": "0.0.1"
   },
   "devDependencies": {}
 }

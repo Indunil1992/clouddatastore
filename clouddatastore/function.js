@@ -1,29 +1,16 @@
-let google = require('googleapis').google;
-let _auth = require('./Authorizer');
-const pubsub = google.pubsub('v1');
+let SL_GCP = require('slappforge-sdk-gcp');
+let sqlConnMgr = require('./SqlConnMgr');
+const sql = new SL_GCP.SQL(sqlConnMgr);
 
 exports.handler = function (request, response) {
-    pubsub.projects.topics.subscriptions.list({
-        topic: `projects/${process.env.GCP_PROJECT}/topics/cloud-builds`,
-        pageSize: 10
-    })
-        .then(response => {
-            console.log(response.data);  // successful response
-             console.log(" passsss");
-            /*
-            response.data = {
-                "subscriptions": [
-                    "projects/<project>/subscriptions/<subscription-1>",
-                    "projects/<project>/subscriptions/<subscription-2>",
-                    ...
-                ]
-            }
-            */
-        })
-        .catch(err => {
-            console.log(err, err.stack); // an error occurred
-            console.log(" errrrrr");
-        });
-
+    // You must always end/destroy the DB connection after it's used.
+    sql.beginTransaction({
+        instanceIdentifier: 'instance10'
+    }, function (error, connection) {
+        if (error) {
+            throw error;
+        }
+    });
+connection.end();
     response.send({ "message": "Successfully executed" });
 }
